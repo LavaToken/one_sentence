@@ -1,0 +1,290 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------------------------------------
+ * Theme variables — driven by data-theme on <html>. We use CSS vars so the
+ * whole tree restyles instantly on toggle, no React re-render of every row.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  --bg: #faf8f3;
+  --text: #2a2217;
+  --muted: #6a5f50;
+  --numbers: #a89880;
+  --divider: #d6cfc0;
+  --chapter: #8a7e6a;
+  --accent-bg: #2a2217;
+  --accent-text: #faf8f3;
+  --accent-border: #2a2217;
+  --highlight: rgba(168, 152, 128, 0.18);
+  --panel-bg: #f3efe5;
+  --pill-bg: transparent;
+  --pill-active-bg: #2a2217;
+  --pill-active-text: #faf8f3;
+  --rule: transparent;
+  --radius: 6px;
+  --font-body: var(--font-lora), Georgia, serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-numbers: var(--font-courier), "Courier New", monospace;
+  --letter-spacing-meta: 0;
+  --meta-transform: none;
+}
+
+html[data-theme="typewriter"] {
+  --bg: #0f0f0f;
+  --text: #e8e8e8;
+  --muted: #666666;
+  --numbers: #444444;
+  --divider: #1e1e1e;
+  --chapter: #888888;
+  --accent-bg: transparent;
+  --accent-text: #e8e8e8;
+  --accent-border: #2e2e2e;
+  --highlight: rgba(232, 232, 232, 0.07);
+  --panel-bg: #161616;
+  --pill-bg: transparent;
+  --pill-active-bg: #2e2e2e;
+  --pill-active-text: #e8e8e8;
+  --rule: #1e1e1e;
+  --radius: 3px;
+  --font-body: var(--font-courier), "Courier New", monospace;
+  --font-display: var(--font-courier), "Courier New", monospace;
+  --font-numbers: var(--font-courier), "Courier New", monospace;
+  --letter-spacing-meta: 0.12em;
+  --meta-transform: uppercase;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Body text size scaling */
+html[data-text-size="normal"] {
+  --body-size: 1.0625rem; /* 17px */
+  --body-line: 1.75;
+}
+html[data-text-size="large"] {
+  --body-size: 1.1875rem; /* 19px */
+  --body-line: 1.85;
+}
+
+html[data-spacing="normal"] {
+  --row-gap: 1.25rem;
+}
+html[data-spacing="relaxed"] {
+  --row-gap: 2.25rem;
+}
+
+/* Focus mode dims everything except .is-latest */
+html[data-focus="on"] .sentence-row:not(.is-latest) {
+  opacity: 0.18;
+  transition: opacity 220ms ease;
+}
+html[data-focus="on"] .sentence-row:not(.is-latest):hover {
+  opacity: 0.55;
+}
+
+/* Hide-toggles via data attributes */
+html[data-numbers="hide"] .sentence-number {
+  visibility: hidden;
+}
+html[data-authors="hide"] .sentence-author {
+  display: none;
+}
+html[data-chapters="hide"] .chapter-divider {
+  display: none;
+}
+
+/* Selection — match theme */
+::selection {
+  background: var(--highlight);
+  color: var(--text);
+}
+
+/* Scrollbar polish on dark theme */
+html[data-theme="typewriter"] {
+  color-scheme: dark;
+}
+
+/* ----------------------------------------------------------------------------
+ * Component-level helpers
+ * ------------------------------------------------------------------------- */
+
+.story-block {
+  border-left: 2px solid var(--rule);
+  padding-left: 1.25rem;
+}
+html[data-theme="manuscript"] .story-block {
+  border-left: none;
+  padding-left: 0;
+}
+
+.cta {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 80ms ease, opacity 120ms ease;
+}
+.cta:hover {
+  opacity: 0.92;
+}
+.cta:active {
+  transform: translateY(1px);
+}
+.cta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+html[data-theme="typewriter"] .cta {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+}
+
+.pill {
+  background: var(--pill-bg);
+  color: var(--muted);
+  border: 1px solid transparent;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+  font-family: var(--font-body);
+}
+.pill[aria-pressed="true"] {
+  background: var(--pill-active-bg);
+  color: var(--pill-active-text);
+}
+html[data-theme="typewriter"] .pill {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  border-radius: var(--radius);
+}
+
+.meta-label {
+  text-transform: var(--meta-transform);
+  letter-spacing: var(--letter-spacing-meta);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.cursor-blink::after {
+  content: "▍";
+  margin-left: 0.15ch;
+  animation: blink 1.1s steps(1) infinite;
+  color: var(--muted);
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background: rgba(15, 15, 15, 0.55);
+  backdrop-filter: blur(2px);
+}
+html[data-theme="manuscript"] .modal-backdrop {
+  background: rgba(42, 34, 23, 0.45);
+}
+
+.modal-card {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+}
+html[data-theme="typewriter"] .modal-card {
+  border: 1px solid var(--accent-border);
+}
+
+textarea.sentence-input {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  width: 100%;
+  outline: none;
+}
+textarea.sentence-input:focus {
+  border-color: var(--text);
+}
+input.author-input {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  width: 100%;
+  outline: none;
+}
+input.author-input:focus {
+  border-color: var(--text);
+}
+
+/* Inline compose textarea */
+.inline-compose-textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.55;
+  font-style: italic;
+}
+.inline-compose-textarea:focus::placeholder {
+  opacity: 0.35;
+}
+
+/* Highlighted sentence (deep-link or freshly added) */
+.sentence-row.is-fresh {
+  animation: flashHighlight 2.4s ease-out forwards;
+}
+.sentence-row.is-deep-link {
+  background: var(--highlight);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  margin: -0.5rem -0.75rem;
+}
+
+@keyframes flashHighlight {
+  0% { background-color: var(--highlight); }
+  100% { background-color: transparent; }
+}
+
+/* Pulsing dot */
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c45a4a;
+  display: inline-block;
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+html[data-theme="typewriter"] .live-dot {
+  background: #d2603e;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
